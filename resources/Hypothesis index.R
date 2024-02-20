@@ -6,7 +6,8 @@ library(dplyr)
 hyp_mat <- readr::read_csv("resources/additional data/hyp_def.csv",
                            trim_ws = TRUE,
                            skip_empty_rows = TRUE,
-                           name_repair = "universal")
+                           name_repair = "universal",
+                           show_col_types = FALSE)
 
 hyp_mat <- as.data.frame(hyp_mat)
 
@@ -21,8 +22,12 @@ rownames(hyp_mat) <- hyp_mat$Acronym # OK
 # Import conceptual scheme: themes and RQ ####
 
 # Import matrices
-rhrq_mat <- readr::read_csv("resources/additional data/RH-RQ.csv")
-theme_rq_mat <- as.data.frame(readr::read_csv("resources/additional data/Theme-RQ.csv"),escape_double =FALSE)
+rhrq_mat <- readr::read_csv("resources/additional data/RH-RQ.csv",
+                            show_col_types = FALSE)
+
+theme_rq_mat <- as.data.frame(readr::read_csv("resources/additional data/Theme-RQ.csv",
+                                              show_col_types = FALSE),
+                              escape_double =FALSE)
 
 
 # check and update acronyms of hypotheses in rhrq

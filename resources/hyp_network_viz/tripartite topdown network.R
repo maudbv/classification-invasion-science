@@ -16,6 +16,8 @@ source("resources/Hypothesis index.R")
 # Build the graph objects ####
 
 # RQ-Hyp network
+names(rhrq_mat)[names(rhrq_mat) == "Meta-invasion science"] =  "Meta-invasion questions"
+
 network_hypRQ <- graph_from_incidence_matrix(
   as.matrix(rhrq_mat),
   directed = TRUE,
@@ -24,15 +26,16 @@ network_hypRQ <- graph_from_incidence_matrix(
 # plot(network_hypRQ)
 
 # Theme network
+theme_rq_mat[theme_rq_mat$Theme == "Meta-invasion science", "RQ_abb"] = "Meta-invasion questions"
 network_themeRQ <- graph_from_data_frame(
-  as.matrix(na.omit(theme_rq_mat[,c("Theme","RQ_abb")])),
+  as.matrix(theme_rq_mat[,c("Theme","RQ_abb")]),
   directed = TRUE)
 
 # plot(network_themeRQ)
 
 # combine networks into 3 layers ####
 network_3layers <- igraph::union(a = network_themeRQ , b = network_hypRQ)
-V(network_3layers)$layer = c(rep(1, 4), rep(2, 9), rep(3,39))
+V(network_3layers)$layer = c(rep(1, 5), rep(2,11), rep(3,39))
 
 
 # # Check that layers match the items:
@@ -88,8 +91,18 @@ nodes_3L$level = nodes_3L$layer
 nodes_3L$group = nodes_3L$level
 
 # Format
+nodes_3L$color = c("#0BCF72","#31688E", "#440154","#F4D021","#FF9F00",
+                   rep("#80E8B7",2),
+                   rep("#8EC2E6", 3),
+                   rep("#C59DCF",3),
+                   rep("#FDE724", 2),
+                   "#ECBB69",
+                   rep("white", 39)
+                   )
+
 nodes_3L$shape = c("box","box", "box")[nodes_3L$level]
-nodes_3L$color = c("grey","coral", "white")[nodes_3L$level]
+nodes_3L$line.color = ""
+#nodes_3L$color = c("grey","coral", "white")[nodes_3L$level]
 nodes_3L$font.color = c("white", "black","black")[nodes_3L$level]
 nodes_3L$font.size = c(60,50, 40)[nodes_3L$level]
 nodes_3L$shadow = FALSE 
@@ -182,3 +195,4 @@ plot_3L_network <- function(n = nodes_3L, e = edges_3L) {
 return(p)
 }
 (p <- plot_3L_network())
+
