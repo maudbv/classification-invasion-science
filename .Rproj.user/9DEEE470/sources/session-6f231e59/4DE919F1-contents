@@ -161,10 +161,10 @@ plot_3L_network <- function(n = nodes_3L, e = edges_3L) {
     n,
     e,
     width = "100%",
-    height = "600px",
-    # main = list(
-    #   text = "Conceptual scheme for Invasion Science",
-    #   style = "font-family:verdana;color:#0085AF;font-size:18px;text-align:center;"),
+    height = "700px",
+    main = list(
+      text = "Conceptual scheme for Invasion Science",
+      style = "font-family:verdana;color:#0085AF;font-size:18px;text-align:center;"),
     margin = -0.2) %>%
     visEdges(
       shadow = FALSE,
@@ -177,13 +177,6 @@ plot_3L_network <- function(n = nodes_3L, e = edges_3L) {
                    zoomView = TRUE ) %>%
     visPhysics(enabled = FALSE)
   
- p <-  p %>%
-    visInteraction(tooltipStyle = 'position: fixed;visibility:hidden;padding: 5px;font-family: verdana;font-size:14px;font-color:#00000;
-                   background-color: white;-moz-border-radius: 3px;*-webkit-border-radius: 3px;border-radius: 3px; border: 1px solid #808074;
-                   box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);max-width:400px;
-                   word-break: break-word;
-                    line-height: 1.4')
-  
   return(p)
 }
 
@@ -194,4 +187,10 @@ plot_3L_network <- function(n = nodes_3L, e = edges_3L) {
 # font-size:14px;font-color:#000000;background-color: #f5f4ed;-moz-border-radius: 3px;*
 # -webkit-border-radius: 3px;border-radius: 3px; border: 1px solid #808074;
 # box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);max-width:400px;word-break: break-all'
+
+
+
+
+p %>%
+  visInteraction(tooltipStyle = 'position: fixed;visibility:hidden;padding: 5px;font-family: verdana;font-size:14px;font-color:#00000;background-color: white;-moz-border-radius: 3px;*-webkit-border-radius: 3px;border-radius: 3px; border: 1px solid #808074;box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);max-width:400px;word-break: break-word')
 

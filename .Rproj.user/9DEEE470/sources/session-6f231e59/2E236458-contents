@@ -21,7 +21,7 @@ library(DT)
 
 # import and pre-process data ####
 source("resources/Hypothesis index.R")
-# source("resources/hyp_network_viz/martin_network_viz.R")
+source("resources/hyp_network_viz/martin_network_viz.R")
 
 #source("resources/hyp_network_viz/hyp-trait network invasion+urban.R")
 source("resources/hyp_network_viz/tripartite topdown network.R")
