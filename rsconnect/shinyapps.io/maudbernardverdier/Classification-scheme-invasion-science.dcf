@@ -1,12 +1,13 @@
-name: Invasion-biology-maps
-title: Classification scheme of invasion science
-username:
+name: Classification-scheme-invasion-science
+title: Classification-scheme-invasion-science
+username: maudbernardverdier
 account: maudbernardverdier
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
-appId: 11245369
-bundleId: 8829741
-url: https://maudbernardverdier.shinyapps.io/Invasion-biology-maps/
+appId: 12279967
+bundleId: 8829767
+url: https://maudbernardverdier.shinyapps.io/Classification-scheme-invasion-science/
+version: 1
 asMultiple: FALSE
 asStatic: FALSE
 ignoredFiles: inspiration/datatable edit example app.R|inspiration/datatable edit module.R|inspiration/fancy edit table with form example app.R

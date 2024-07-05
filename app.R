@@ -1,7 +1,7 @@
 # Shiny app dashboard to explore conceptual scheme and hypotheses in invasion biology
 # author: Maud Bernard-Verdier
 # source: orkg.org
-# deployed: https://maudbernardverdier.shinyapps.io/Invasion-biology-maps/
+# deployed: https://maudbernardverdier.shinyapps.io/Classification-scheme-invasion-science/
 
 #### TODO
 # improve page layout : with sub plots for sub hyps
@@ -14,9 +14,9 @@ source("resources/initiate_app.R")
 ui <- bootstrapPage(
   navbarPage(theme = shinythemes::shinytheme("paper"),
              collapsible = TRUE,
-             HTML('<a style="text-decoration:none;cursor:default;color:#CC6D7B" class="active" href="#"> Conceptual scheme of Invasion biology </a>'),
+             HTML('<a style="text-decoration:none;cursor:default;color:#CC6D7B" class="active" href="#"> Classification scheme of invasion science </a>'),
              id="nav",
-             windowTitle = "Classification scheme of Invasion Science",
+             windowTitle = "Classification scheme of invasion Science",
              
              # 1: network visualization
              tabPanel("Scheme",
@@ -36,12 +36,7 @@ ui <- bootstrapPage(
                       
                       div(style = "margin-right:20px; margin-left:20px;",
                                tabsetPanel(
-                                 
-                                 tabPanel("Themes-Questions",
-                                          DT::DTOutput("theme_rq_mat") 
-                                          ,style = 'max-width: 3000px;'
-                                 ),
-                                 
+
                                  tabPanel("Hypotheses-Questions",
                                           DT::DTOutput("rhrq_DT") 
                                           ,style = 'max-width: 3000px;'
@@ -49,6 +44,11 @@ ui <- bootstrapPage(
                                  
                                  tabPanel("Hypotheses defintions",
                                           DT::DTOutput("hyp_mat_DT") 
+                                          ,style = 'max-width: 3000px;'
+                                 ),
+                                 
+                                 tabPanel("Themes-Questions",
+                                          DT::DTOutput("theme_rq_mat") 
                                           ,style = 'max-width: 3000px;'
                                  )
                                )
@@ -69,7 +69,7 @@ ui <- bootstrapPage(
                       div(class= "container",
                           style="width: 100%; text-align: center; padding-left: 20px; padding-right:20px;",
                       div(img(src="hi-knowledge workshops logo.svg",
-                                             align = "left", width = "30%", style = "margin-right: 35px;")),
+                              align = "left", width = "30%", style = "margin-right: 35px;")),
                       div(style="margin-top: 30px; text-align: left;",
                           p(
                              'This work is part of the enKORE project (2020-2024), a project of the',
@@ -167,7 +167,7 @@ server <- function(input, output, session) {
     )
     
   },
-  server =FALSE)
+  server = FALSE)
   
   #("theme_rq_mat") 
   output$theme_rq_mat = DT::renderDT({

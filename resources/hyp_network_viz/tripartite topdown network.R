@@ -174,7 +174,7 @@ plot_3L_network <- function(n = nodes_3L, e = edges_3L) {
                autoResize = FALSE,
                manipulation = FALSE) %>%
     visInteraction(navigationButtons = TRUE,
-                   zoomView = TRUE ) %>%
+                   zoomView = FALSE ) %>%
     visPhysics(enabled = FALSE)
   
  p <-  p %>%
