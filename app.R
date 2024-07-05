@@ -19,10 +19,11 @@ ui <- bootstrapPage(
 
              # 1: network visualization
             tabPanel("Conceptual scheme",
-                               visNetworkOutput("tripartite_network",width = "auto",height = "600px"),
-                               tags$br(),
-                               HTML('<a style="text-decoration:none;cursor:default;color:#808080" href="#">Hierarchical scheme illustrating the distribution of hypotheses among nine major research questions and four themes in invasion biology. The network is based on ongoing expert assessment and classification of hypotheses within the enKORE project</a>'),
-                               tags$br()
+                     visNetworkOutput("tripartite_network",width = "auto",height = "600px"),
+                     tags$br(),
+                     hr(),
+                     HTML('<a style="text-decoration:none;cursor:default;color:#808080" href="#">Hierarchical scheme illustrating the distribution of hypotheses among five main themes in invasion biology, subdivided into 10 major research questions. The network is based on ongoing expert assessment and classification of hypotheses within the enKORE project</a>'),
+                     tags$br()
                       ),
                       
                       #2: Martin Ender's network
@@ -36,7 +37,15 @@ ui <- bootstrapPage(
              # Third page: about the project
              tabPanel("About the project",
                       "These vizualisations were built by Maud Bernard-Verdier using R shiny."
-             )
+             ),
+            
+            # Third page: about the project
+            tabPanel("Datatable",
+                     div(
+                       DT::DTOutput("original_data") #TODO update type of table output for more interaction +add years
+                       ,style = 'max-width: 3000px;'
+                     )
+            )
   )
 )
 
@@ -55,8 +64,31 @@ server <- function(input, output, session) {
   output$tripartite_network<- renderVisNetwork({
     plot_3L_network(nodes_3L, edges_3L)
   })
+
+# Data table
+output$original_data = DT::renderDT({
+  display_columns <- c("Title","support_for_hypothesis","Investigated_species","Habitat","Research_Method", "continents","Study_date", "hypothesis", "DOI") 
+  df <-  as.data.frame(rhrq_mat)
+  rownames(df) <- rownames(df)
+  datatable(df,
+            rownames = TRUE,
+            extensions = 'Buttons',
+            options = list(
+              dom = 'Bfrtip',
+              exportOptions = list(header = ""),
+              buttons = list(
+                list(
+                  extend = "csv", 
+                  filename = 'export',
+                  text = "Download", 
+                  title = NULL
+                )
+              )
+            ) 
+            )
+  
+},  server = FALSE)
 }
-
-
+            
 thematic_shiny()
 shinyApp(ui = ui, server = server)

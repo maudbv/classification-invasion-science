@@ -64,7 +64,7 @@ V(network_3layers)$def[V(network_3layers)$layer == 2] <- ""
 
 # Create labels
 V(network_3layers)$label = V(network_3layers)$full_name
-V(network_3layers)$label[1:4] = c("Introduction\npathways","Invasion\nsuccess","Invasion\nimpacts", "Management")
+V(network_3layers)$label[1:5] = c("Introduction\npathways","Invasion\nsuccess","Invasion\nimpacts", "Management", "Meta-Invasion\nscience")
 V(network_3layers)$label[V(network_3layers)$layer == 2] <- 
   as.character(theme_rq_mat[match(V(network_3layers)$full_name[V(network_3layers)$layer == 2],  theme_rq_mat$`Research question`),"Research question_2lines"])
 
@@ -100,32 +100,24 @@ nodes_3L$color = c("#0BCF72","#31688E", "#440154","#F4D021","#FF9F00",
                    rep("white", 39)
                    )
 
-nodes_3L$shape = c("box","box", "box")[nodes_3L$level]
+nodes_3L$shape = c("ellipse","box", "box")[nodes_3L$level]
 nodes_3L$line.color = ""
 #nodes_3L$color = c("grey","coral", "white")[nodes_3L$level]
 nodes_3L$font.color = c("white", "black","black")[nodes_3L$level]
-nodes_3L$font.size = c(60,50, 40)[nodes_3L$level]
+nodes_3L$font.size = c(70,50,40)[nodes_3L$level]
+nodes_3L$font.face = "verdana"
 nodes_3L$shadow = FALSE 
 nodes_3L$font.align = c("center", "center", "left")[nodes_3L$level]
 
-# tooltip (html or character), when the mouse is above
-# nodes_3L$title = paste0("<p><i>",
-#                         nodes_3L$type,
-#                         "</i><br><b>",
-#                         nodes_3L$full_name,
-#                         "</b><br> </p>",
-#                         nodes_3L$def,
-#                         "</b><br> </p>"
-# )
 
-
-nodes_3L$title = paste0("<p style=\"display: block; word-wrap:break-word;  width:350px; white-space: normal\"> <i>",
+# Tool tip on hover
+nodes_3L$title = paste0("<p style=\"font-color: white;\"> <i>",
                         nodes_3L$type,
                         "</i><br><b>",
                         nodes_3L$full_name,
                         "</b><br>",
                         nodes_3L$def,
-                        "</b><br> </p>"
+                        "<br></p> "
 )
 
 
@@ -140,59 +132,65 @@ edges_3L$from <- nodes_3L$id[match(edges_3L$from, nodes_3L$name)]
 edges_3L$to <- nodes_3L$id[match(edges_3L$to, nodes_3L$name)]
 
 
-# # plot
-# visNetwork::visNetwork(
-#   nodes_3L,
-#   edges_3L,
-#   height = "600px",
-#   width = "100%",
-#   main = list(
-#     text = "Research questions and hypotheses in Invasion Ecology",
-#     style = "font-family:Roboto slab;color:#0085AF;font-size:18px;text-align:center;")) %>%
-#   visPhysics(enabled = TRUE,
-#              solver = "forceAtlas2Based" , 
-#              forceAtlas2Based = list(gravitationalConstant = -80,
-#                                      avoidOverlap = 0.1,
-#                                      springLength = 1,
-#                                      springConstant = 0.1))
-# 
-# # NOT quite working like I want: physics are annoying
+# Set X and Y position of nodes manually
+
+# Get number of nodes in each layer
+nt = nrow(filter(nodes_3L, layer == 1))
+nq = nrow(filter(nodes_3L, layer == 2))
+nh = nrow(filter(nodes_3L, layer == 3))
+
+# set Y
+nodes_3L$y = c(
+  seq(1:nt) / nt,
+  seq(1:nq) / nq,
+  seq(1:nh) / nh
+) * (nh)* 50
+
+# set X
+nodes_3L$x = nodes_3L$layer/3* 4000
+
+# remove edge and RQ node for meta invasion science (AFTER having made space for it on XY positions
+rm_id <- nodes_3L[ which(nodes_3L$name == "Meta-invasion questions"), "id"]
+edges_3L <- edges_3L[-which(edges_3L$to == rm_id),]
+nodes_3L <- nodes_3L[ -which(nodes_3L$id == rm_id), ]
 
 
+# Plot network function
 plot_3L_network <- function(n = nodes_3L, e = edges_3L) {
- p <- visNetwork::visNetwork(
-   n,
-   e,
-   main = list(
-     text = "Conceptual scheme for Invasion Ecology",
-     style = "font-family:Roboto slab;color:#0085AF;font-size:18px;text-align:center;"),
-   margin = -0.2) %>%
-   visEdges(
-     shadow = FALSE,
-     color = list(color = "black", highlight = "#C62F4B")
-   ) %>%
-   visOptions(highlightNearest = list(enabled = T, degree = 1, hover = FALSE),
-              autoResize = FALSE,
-              manipulation = FALSE) %>%
-   visInteraction(navigationButtons = TRUE) %>%
-   visHierarchicalLayout(levelSeparation = 1400,
-                         nodeSpacing = 1,
-                         treeSpacing = 20,
-                         edgeMinimization =TRUE,
-                         shakeTowards = "roots",
-                         parentCentralization = TRUE,
-                         blockShifting = TRUE,
-                         direction = "LR") %>%
-   visPhysics(enabled = TRUE,
-              stabilization = TRUE,
-              solver = "hierarchicalRepulsion",
-              hierarchicalRepulsion = list(
-                nodeDistance = 100,
-                avoidOverlap = 0.3)) %>%
-   visEvents(type = "once", startStabilizing = "function() {
-            this.moveTo({scale:1.2})}") 
-
-return(p)
+  p <- visNetwork::visNetwork(
+    n,
+    e,
+    width = "100%",
+    height = "700px",
+    main = list(
+      text = "Conceptual scheme for Invasion Science",
+      style = "font-family:verdana;color:#0085AF;font-size:18px;text-align:center;"),
+    margin = -0.2) %>%
+    visEdges(
+      shadow = FALSE,
+      color = list(color = "black", highlight = "#C62F4B")
+    ) %>%
+    visOptions(highlightNearest = list(enabled = T, degree = 1, hover = FALSE),
+               autoResize = FALSE,
+               manipulation = FALSE) %>%
+    visInteraction(navigationButtons = TRUE,
+                   zoomView = TRUE ) %>%
+    visPhysics(enabled = FALSE)
+  
+  return(p)
 }
+
 (p <- plot_3L_network())
+
+# Tooltip style default:
+# 'position: fixed;visibility:hidden;padding: 5px;font-family: verdana;
+# font-size:14px;font-color:#000000;background-color: #f5f4ed;-moz-border-radius: 3px;*
+# -webkit-border-radius: 3px;border-radius: 3px; border: 1px solid #808074;
+# box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);max-width:400px;word-break: break-all'
+
+
+
+
+p %>%
+  visInteraction(tooltipStyle = 'position: fixed;visibility:hidden;padding: 5px;font-family: verdana;font-size:14px;font-color:#00000;background-color: white;-moz-border-radius: 3px;*-webkit-border-radius: 3px;border-radius: 3px; border: 1px solid #808074;box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);max-width:400px;word-break: break-word')
 
