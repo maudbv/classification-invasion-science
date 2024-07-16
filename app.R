@@ -99,6 +99,20 @@ ui <- bootstrapPage(
                         a( href = "https://www.volkswagenstiftung.de/de","Volkswagen Stiftung.")
                       )
              )
+             ),
+             
+             # Panel 4: editable tables
+             tabPanel("Create your own version!",
+                      
+                      div(style = "margin-right:20px; margin-left:20px;",
+                          tabsetPanel(
+                            
+                            tabPanel("Hypotheses-Questions",
+                                     DT::DTOutput("edit_rhrq_DT"),
+                                     style = 'max-width: 3000px;'
+                            )
+                          )
+                      )
              )
   )
 )
@@ -225,6 +239,55 @@ server <- function(input, output, session) {
     
   },
   server = FALSE)
+  
+  ###Editable objects
+  output$edit_rhrq_DT = DT::renderDT({
+    df <-  as.data.frame(rhrq_mat)
+    rownames(df) <- paste( hyp_mat[match(rownames(rhrq_mat),hyp_mat$Acronym), "Hypothesis_label"], 
+                           " (",
+                           rownames(rhrq_mat),
+                           ")", sep = ""
+    )
+    # a custom table container
+    sketch = htmltools::withTags(table(
+      class = 'display',
+      thead(
+        tr(
+          th(rowspan = 2, colspan = 1,  'Hypotheses'),
+          th(colspan = 2, 'Pathways & Introduction'),
+          th(colspan = 3, 'Invasion success'),
+          th(colspan = 3, 'Invasion impact'),
+          th(colspan = 2, 'Managing biological invasions')
+        ),
+        tr(
+          lapply(colnames(rhrq_mat), th)
+        )
+      )
+    ))
+    datatable(df,
+              editable = "cell",
+              container = sketch,
+              rownames = TRUE,
+              extensions = 'Buttons',
+              caption = HTML("<p> Here you can edit the table to create your own version of the scheme. Click on the cells to edit links (0 or 1) between hypotheses and research questions. You can then downlaod a csv file of your version. We would love to hear about your ideas, and invite you to share your version with us and start a conversation! In the future, we hope to gather more input from the community and come up with a consensus version, or perhaps even alternative versions. </p>"),
+              options = list(
+                pageLength =10, 
+                dom = 'Bfrtip',
+                exportOptions = list(header = ""),
+                buttons = list(
+                  list(
+                    extend = "csv", 
+                    filename = 'export',
+                    text = "Download your own version!", 
+                    title = NULL
+                  )
+                )
+              )
+    )
+    
+  },
+  server = FALSE)
+  
   
 }
 
