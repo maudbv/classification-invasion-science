@@ -39,8 +39,7 @@ rownames(rhrq_mat) <- rhrq_mat$Hypothesis
 rhrq_mat <- rhrq_mat[ ,-1]
 
 rhrq_mat[ ,theme_rq_mat$RQ_abb]
-                      
+  
                       
 # check the names of RQ match
 stopifnot(setequal(names(rhrq_mat),theme_rq_mat$RQ_abb))
-

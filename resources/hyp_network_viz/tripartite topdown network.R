@@ -9,23 +9,18 @@ library(visNetwork)
 library(dplyr)
 library(grDevices)
 
-
-# Import data ####
-source("resources/Hypothesis index.R")
-
-
+# FUNCTION: Build the scheme as nodes and edges of a graph object ####
+build_scheme <- function(rhrq_data = rhrq_mat) {
+  
 # RQ-Hyp network
-names(rhrq_mat)[names(rhrq_mat) == "Meta-invasion science"] =  "Meta-invasion questions"
-
 network_hypRQ <- graph_from_incidence_matrix(
-  as.matrix(rhrq_mat),
+  as.matrix(rhrq_data),
   directed = TRUE,
   mode = "in")
 
 # plot(network_hypRQ)
 
 # Theme network
-theme_rq_mat[theme_rq_mat$Theme == "Meta-invasion science", "RQ_abb"] = "Meta-invasion questions"
 network_themeRQ <- graph_from_data_frame(
   as.matrix(theme_rq_mat[,c("Theme","RQ_abb")]),
   directed = TRUE)
@@ -173,8 +168,11 @@ rm_id <- nodes_3L[ which(nodes_3L$name == "Meta-invasion questions"), "id"]
 edges_3L <- edges_3L[-which(edges_3L$to == rm_id),]
 nodes_3L <- nodes_3L[ -which(nodes_3L$id == rm_id), ]
 
+scheme = list(n = nodes_3L, e = edges_3L)
+return(scheme)
+}
 
-# Plot network function
+# Plot network function ####
 plot_3L_network <- function(n = nodes_3L, e = edges_3L) {
   p <- visNetwork::visNetwork(
     n,
@@ -206,7 +204,9 @@ plot_3L_network <- function(n = nodes_3L, e = edges_3L) {
   return(p)
 }
 
-(p <- plot_3L_network())
+# Run function to create original scheme ####
+scheme_original <- build_scheme()
+# (p <- plot_3L_network(scheme_original$n, scheme_original$e))
 
 # Tooltip style default:
 # 'position: fixed;visibility:hidden;padding: 5px;font-family: verdana;

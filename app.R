@@ -23,13 +23,11 @@ ui <- bootstrapPage(
                       div(class= "container",
                           style="width: 100%; text-align: center; padding-left: 20px; padding-right:20px;",
                           div(style = "height: 700px; padding-top: 0px; padding-right:20px; padding-left:20px;",
-                              visNetworkOutput("tripartite_network", height = "100%")
-                          ),
+                              visNetworkOutput("tripartite_network", height = "100%")),
                           p(style ="text-align: left;text-decoration:none;cursor:default;color:#808080",
-                            "Hierarchical conceptual scheme illustrating the distribution of hypotheses among five main themes in invasion science, subdivided into 10 major research questions. The network is based on expert assessment and classification of hypotheses within the enKORE project, as described in Musseau et al. (in revision for Bioscience)"
+                            "Hierarchical conceptual scheme illustrating the distribution of hypotheses among five main themes in invasion science, subdivided into 10 major research questions. The network is based on expert assessment and classification of hypotheses within the enKORE project, as described in Musseau et al. (in revision for Bioscience)")
                           )
-                      )
-             ),
+                      ),
              
              # Panel 2: Filtered data table
              tabPanel("Data",  
@@ -65,21 +63,29 @@ ui <- bootstrapPage(
              # ),
              
              
-             # Panel 4: editable tables
+             # Panel 3: editable tables
              tabPanel("Create your own version!",
                       
                       div(style = "margin-right:20px; margin-left:20px;",
                           tabsetPanel(
-                            
                             tabPanel("Hypotheses-Questions",
                                      DT::DTOutput("edit_rhrq_DT"),
                                      style = 'max-width: 3000px;'
-                            )
+                                     ),
+                            tabPanel("Scheme",
+                                     div(class= "container",
+                                         style="width: 100%; text-align: center; padding-left: 20px; padding-right:20px;",
+                                         div(style = "height: 700px; padding-top: 0px; padding-right:20px; padding-left:20px;",
+                                             visNetworkOutput("new_tripartite_network", height = "100%")),
+                                         p(style ="text-align: left;text-decoration:none;cursor:default;color:#808080",
+                                           "Hierarchical conceptual scheme illustrating the distribution of hypotheses among five main themes in invasion science, subdivided into 10 major research questions. The network is based on expert assessment and classification of hypotheses within the enKORE project, as described in Musseau et al. (in revision for Bioscience)")
+                                     )
+                            ),
                           )
                       )
              ),
              
-             # Third page: about the project
+             # Page 4: about the project
              tabPanel("About the project",
                       div(class= "container",
                           style="width: 100%; text-align: center; padding-left: 20px; padding-right:20px;",
@@ -126,20 +132,15 @@ ui <- bootstrapPage(
 
 server <- function(input, output, session) {
   
-  
-  # # Martin's network
-  # output$martin_network <- renderVisNetwork({
-  #   plot_martin_network(nodes_martin, edges_martin)
-  # })
-  
+
   # tripartite network of hypotheses
   output$tripartite_network<- renderVisNetwork({
-    plot_3L_network(nodes_3L, edges_3L)
+    plot_3L_network(scheme_original$n, scheme_original$e)
   })
 
   
-  # Datatable of RH-RQ links
   
+  # Datatable of RH-RQ links
   output$rhrq_DT = DT::renderDT({
     df <-  as.data.frame(rhrq_mat)
     rownames(df) <- paste( hyp_mat[match(rownames(rhrq_mat),hyp_mat$Acronym), "Hypothesis_label"], 
@@ -291,7 +292,36 @@ server <- function(input, output, session) {
   },
   server = FALSE)
   
+
+  # plot another version of the scheme responding to editable table ####
   
+  # make a reactive data table:
+  # my_rhrq <- reactiveValues(df = rhrq_mat)
+  # new_scheme = reactiveValues(s = build_scheme(my_rhrq$df))
+  # 
+  my_rhrq <- reactiveValues(df=rhrq_mat)
+  
+
+  # Observe editing events to change 
+  observeEvent(input$edit_rhrq_DT_cell_edit,{
+    edit <- input$edit_rhrq_DT_cell_edit # just to simplify typing, can keep long form for later
+    print(edit) # debugging, remove in prod
+    str(edit)
+    i <- edit$row
+    j <- edit$col
+    v <- edit$value
+    
+    my_rhrq$df[i, j] <<- DT::coerceValue(v, my_rhrq$df[i, j])  ## editing changes in the displayed dataset
+
+     })
+  
+  # tripartite network of hypotheses
+  output$new_tripartite_network<- renderVisNetwork({
+    netw = build_scheme(my_rhrq$df)
+    plot_3L_network( netw$n, netw$e)
+  })
+  
+
 }
 
 
