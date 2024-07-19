@@ -195,7 +195,7 @@ plot_3L_network <- function(n = nodes_3L, e = edges_3L) {
     visPhysics(enabled = FALSE)
   
  p <-  p %>%
-    visInteraction(tooltipStyle = 'position: fixed;visibility:hidden;padding: 5px;font-family: verdana;font-size:14px;font-color:#00000;
+    visInteraction(tooltipStyle = 'position: fixed; text-align: left; visibility:hidden;padding: 5px;font-family: verdana;font-size:14px;font-color:#00000;
                    background-color: white;-moz-border-radius: 3px;*-webkit-border-radius: 3px;border-radius: 3px; border: 1px solid #808074;
                    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);max-width:400px;
                    word-break: break-word;

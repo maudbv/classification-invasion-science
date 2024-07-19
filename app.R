@@ -21,11 +21,12 @@ ui <- bootstrapPage(
              # 1: network visualization
              tabPanel("Scheme",
                       div(class= "container",
-                          style="width: 100%; text-align: center; padding-left: 20px; padding-right:20px;",
-                          div(style = "height: 700px; padding-top: 0px; padding-right:20px; padding-left:20px;",
-                              visNetworkOutput("tripartite_network", height = "100%")),
+                          style="width: 100%; text-align: left; padding-left: 20px; padding-right:20px;",
                           p(style ="text-align: left;text-decoration:none;cursor:default;color:#808080",
-                            "Hierarchical conceptual scheme illustrating the distribution of hypotheses among five main themes in invasion science, subdivided into 10 major research questions. The network is based on expert assessment and classification of hypotheses within the enKORE project, as described in Musseau et al. (in revision for Bioscience)")
+                            "Scheme illustrating the distribution of major themes, research questions and related hypotheses in invasion science. The network is based on expert assessment and classification of hypotheses as described in Musseau et al. (in revision for Bioscience)"),
+                          div(style = "height: 600px; padding-top: 0px; padding-right:20px; padding-left:20px;",
+                              visNetworkOutput("tripartite_network", height = "100%"))
+                          
                           )
                       ),
              
@@ -68,13 +69,16 @@ ui <- bootstrapPage(
                       
                       div(style = "margin-right:20px; margin-left:20px;",
                           tabsetPanel(
-                            tabPanel("Hypotheses-Questions",
+                            tabPanel("Edit the link between Hypotheses and Questions",
                                      DT::DTOutput("edit_rhrq_DT"),
                                      style = 'max-width: 3000px;'
                                      ),
-                            tabPanel("Scheme",
+                            tabPanel("View your new scheme",
                                      div(class= "container",
-                                         style="width: 100%; text-align: center; padding-left: 20px; padding-right:20px;",
+                                         style="width: 100%; text-align: center; padding-left: 20px; padding-right:20px;",      
+                                         br(),
+                                         p( style="text-align: left;",
+                                            "This scheme reflects the edits made in the datatable, and will reset if your reload the page. To download a snapshot as a png, simply right click and select 'save image as'"),
                                          div(style = "height: 700px; padding-top: 0px; padding-right:20px; padding-left:20px;",
                                              visNetworkOutput("new_tripartite_network", height = "100%")),
                                          p(style ="text-align: left;text-decoration:none;cursor:default;color:#808080",
@@ -106,7 +110,7 @@ ui <- bootstrapPage(
              # footer: about the project
              footer = list(
                hr(), 
-               div(style = "clear:both; text-align: left;  padding-left: 20px; padding-right:20px;",
+               div(style = "clear:both; text-align: center;  padding-left: 20px; padding-right:20px;",
                    "Webpage built by ",
                    a(href = "mailto:maudbv@gmail.com","Maud Bernard-Verdier"),
                    "using R shiny. This project was funded by the",
@@ -114,13 +118,14 @@ ui <- bootstrapPage(
                ),
                div(class= "container",
                    style="width: 100%; text-align: center; padding-left: 20px; padding-right:20px;",
-                   div(style = "display: inline-block; width:90%;  margin-top:10px; margin-bottom:30px; text-align: center;",
-                       img( src="IGB_dt_farbe_pos.jpg", align = "left", width = "25%",
-                            style = "margin-left: 35px; display: inline-block;"),
-                       img( src="fu-logo-240425-RGB-p.png", align = "left", width = "23%",
-                            style = "margin-left: 35px;display: inline-block; "),
-                       img(src="Logo_Volkswagenstiftung.jpg", align = "left", width = "25%",
-                           style = "float: left;display: inline-block;  margin-left: 35px; ")
+                   div(style = "display: inline-block; 
+                       width:90%; text-align: center; margin-top:10px; margin-bottom:30px;",
+                       img( src="IGB_dt_farbe_pos.jpg", align = "center", width = "200px",
+                            style = "display: inline-block; margin: 10px 35px 10px 35px;"),
+                       img( src="fu-logo-240425-RGB-p.png", align = "center", width = "150px",
+                            style = "display: inline-block; margin: 10px 35px 10px 35px; "),
+                       img(src="Logo_Volkswagenstiftung.jpg", align = "center", width = "200x",
+                           style = "display: inline-block;margin:  margin: 10px 35px 10px 35px; ")
                    )
              )
              )
@@ -141,6 +146,24 @@ server <- function(input, output, session) {
   
   
   # Datatable of RH-RQ links
+  # a custom table container
+  sketch = htmltools::withTags(table(
+    class = 'display',
+    thead(
+      tr(
+        th(rowspan = 2, colspan = 1,  'Hypotheses'),
+        th(colspan = 2, 'Pathways & Introduction'),
+        th(colspan = 3, 'Invasion success'),
+        th(colspan = 3, 'Invasion impact'),
+        th(colspan = 2, 'Managing biological invasions'),
+        th(rowspan = 2,  colspan = 1,'Meta-invasion science')
+      ),
+      tr(
+        lapply(colnames(rhrq_mat)[1:10], th)
+      )
+    )
+  ))
+  
   output$rhrq_DT = DT::renderDT({
     df <-  as.data.frame(rhrq_mat)
     rownames(df) <- paste( hyp_mat[match(rownames(rhrq_mat),hyp_mat$Acronym), "Hypothesis_label"], 
@@ -148,29 +171,14 @@ server <- function(input, output, session) {
                            rownames(rhrq_mat),
                            ")", sep = ""
     )
-    # a custom table container
-    sketch = htmltools::withTags(table(
-      class = 'display',
-      thead(
-        tr(
-          th(rowspan = 2, colspan = 1,  'Hypotheses'),
-          th(colspan = 2, 'Pathways & Introduction'),
-          th(colspan = 3, 'Invasion success'),
-          th(colspan = 3, 'Invasion impact'),
-          th(colspan = 2, 'Managing biological invasions')
-        ),
-        tr(
-          lapply(colnames(rhrq_mat), th)
-        )
-      )
-    ))
+   
     datatable(df,
               container = sketch,
               rownames = TRUE,
               extensions = 'Buttons',
               options = list(
                 pageLength =10, 
-                dom = 'Bfrtip',
+                dom = 'lBfrtip',
                 exportOptions = list(header = ""),
                 buttons = list(
                   list(
@@ -194,7 +202,7 @@ server <- function(input, output, session) {
               extensions = 'Buttons',
               filter = "top",
               options = list(
-                dom = 'Bfrtip',
+                dom = 'lBfrtip',
                 pageLength = 20,
                 exportOptions = list(header = ""),
                 buttons = list(
@@ -252,22 +260,7 @@ server <- function(input, output, session) {
                            rownames(rhrq_mat),
                            ")", sep = ""
     )
-    # a custom table container
-    sketch = htmltools::withTags(table(
-      class = 'display',
-      thead(
-        tr(
-          th(rowspan = 2, colspan = 1,  'Hypotheses'),
-          th(colspan = 2, 'Pathways & Introduction'),
-          th(colspan = 3, 'Invasion success'),
-          th(colspan = 3, 'Invasion impact'),
-          th(colspan = 2, 'Managing biological invasions')
-        ),
-        tr(
-          lapply(colnames(rhrq_mat), th)
-        )
-      )
-    ))
+   
     datatable(df,
               editable = "cell",
               container = sketch,
@@ -276,7 +269,7 @@ server <- function(input, output, session) {
               caption = HTML("<p> Here you can edit the table to create your own version of the scheme. Click on the cells to edit links (0 or 1) between hypotheses and research questions. You can then downlaod a csv file of your version. We would love to hear about your ideas, and invite you to share your version with us and start a conversation! In the future, we hope to gather more input from the community and come up with a consensus version, or perhaps even alternative versions. </p>"),
               options = list(
                 pageLength =10, 
-                dom = 'Bfrtip',
+                dom = 'lBfrtip',
                 exportOptions = list(header = ""),
                 buttons = list(
                   list(
