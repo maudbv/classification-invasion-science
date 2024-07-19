@@ -13,7 +13,6 @@ library(grDevices)
 # Import data ####
 source("resources/Hypothesis index.R")
 
-# Build the graph objects ####
 
 # RQ-Hyp network
 names(rhrq_mat)[names(rhrq_mat) == "Meta-invasion science"] =  "Meta-invasion questions"
@@ -49,7 +48,7 @@ V(network_3layers)$full_name[V(network_3layers)$layer == 1] <-
 
 V(network_3layers)$full_name [V(network_3layers)$layer == 2] <-  
   theme_rq_mat[match(V(network_3layers)$name[V(network_3layers)$layer == 2],
-                     theme_rq_mat$RQ_abb),"Research question"]
+                     theme_rq_mat$RQ_abb),"Research Question"]
 
 V(network_3layers)$full_name[V(network_3layers)$layer == 3] <-  
   hyp_mat[match(V(network_3layers)$name[V(network_3layers)$layer == 3],
@@ -64,9 +63,9 @@ V(network_3layers)$def[V(network_3layers)$layer == 2] <- ""
 
 # Create labels
 V(network_3layers)$label = V(network_3layers)$full_name
-V(network_3layers)$label[1:5] = c("Introduction\npathways","Invasion\nsuccess","Invasion\nimpacts", "Management", "Meta-Invasion\nscience")
+V(network_3layers)$label[1:5] = c("Introduction\npathways","Invasion success\n& invasibility","Invasion\nimpact", "Managing\nbiological invasions", "Meta-Invasion\nscience")
 V(network_3layers)$label[V(network_3layers)$layer == 2] <- 
-  as.character(theme_rq_mat[match(V(network_3layers)$full_name[V(network_3layers)$layer == 2],  theme_rq_mat$`Research question`),"Research question_2lines"])
+  as.character(theme_rq_mat[match(V(network_3layers)$full_name[V(network_3layers)$layer == 2],  theme_rq_mat$`Research Question`),"Research question_2lines"])
 
 # add ltext afjustment?
 V(network_3layers)$adj = 0.5
@@ -84,7 +83,7 @@ nodes_3L <- data.frame(
 # nodes_3L$id[1:4] = nodes_3L$id[4:1] # reorder themes
 
 # type of node
-nodes_3L$type =  c("Theme", "Research question","Hypothesis")[nodes_3L$layer]
+nodes_3L$type =  c("Theme", "Research Question","Hypothesis")[nodes_3L$layer]
 nodes_3L$level = nodes_3L$layer
 
 # make levels into groups for formatting
@@ -101,10 +100,18 @@ nodes_3L$color = c("#0BCF72","#31688E", "#440154","#F4D021","#FF9F00",
                    )
 
 nodes_3L$shape = c("ellipse","box", "box")[nodes_3L$level]
-nodes_3L$line.color = ""
+nodes_3L$borderWidth  = 0
+nodes_3L$heightConstraint.minimum = c(200, 160, 20)[nodes_3L$level]
+nodes_3L$heightConstraint.valign = "center"
+
+nodes_3L$margin.top = c(10, 20, 0)[nodes_3L$level]
+nodes_3L$margin.bottom = c(10, 20, 0)[nodes_3L$level]
+nodes_3L$margin.left =c(10, 50, 0)[nodes_3L$level]
+nodes_3L$margin.right = c(10, 50, 0)[nodes_3L$level]
+
 #nodes_3L$color = c("grey","coral", "white")[nodes_3L$level]
 nodes_3L$font.color = c("white", "black","black")[nodes_3L$level]
-nodes_3L$font.size = c(70,50,40)[nodes_3L$level]
+nodes_3L$font.size = c(90,60,50)[nodes_3L$level]
 nodes_3L$font.face = "verdana"
 nodes_3L$shadow = FALSE 
 nodes_3L$font.align = c("center", "center", "left")[nodes_3L$level]
@@ -131,6 +138,12 @@ colnames(edges_3L) <- c("from", "to")
 edges_3L$from <- nodes_3L$id[match(edges_3L$from, nodes_3L$name)]
 edges_3L$to <- nodes_3L$id[match(edges_3L$to, nodes_3L$name)]
 
+# # stop edges at node borders and left align hypotheses : does not work for now
+# nodes_3L$widthConstraint.minimum = c(NA, NA,1300)[nodes_3L$level]
+# nodes_3L$widthConstraint.valign = c("center", "center", "left")[nodes_3L$level] 
+# edges_3L$endPointOffset.from = + 650
+# edges_3L$endPointOffset.to = - 650
+# edges_3L$arrowStrikethrough = TRUE
 
 # Set X and Y position of nodes manually
 
@@ -140,14 +153,20 @@ nq = nrow(filter(nodes_3L, layer == 2))
 nh = nrow(filter(nodes_3L, layer == 3))
 
 # set Y
-nodes_3L$y = c(
-  seq(1:nt) / nt,
-  seq(1:nq) / nq,
-  seq(1:nh) / nh
-) * (nh)* 50
+yt = (seq(1:nt)*1.5 / nt)* (nh)* 50
+yq = (seq(1:nq) / nq)* (nh)* 50
+yh = (seq(1:nh) / nh)* (nh)* 50
+
+scale_range <-function(x, scalerange=c(0, 1)) {
+ ((x - min(x))/(max(x) - min(x)))*(scalerange[2] - scalerange[1]) + scalerange[1]
+  }
+yq = scale_range(yq, scalerange = range(yt)+ c(-200, 000))
+yh = scale_range(yh, scalerange = range(yt)+ c(-300, 300) )
+
+nodes_3L$y = c(yt, yq, yh)
 
 # set X
-nodes_3L$x = nodes_3L$layer/3* 4000
+nodes_3L$x = nodes_3L$layer/3* 4000 + c(0,0, 500)[nodes_3L$layer]
 
 # remove edge and RQ node for meta invasion science (AFTER having made space for it on XY positions
 rm_id <- nodes_3L[ which(nodes_3L$name == "Meta-invasion questions"), "id"]
@@ -161,7 +180,7 @@ plot_3L_network <- function(n = nodes_3L, e = edges_3L) {
     n,
     e,
     width = "100%",
-    height = "600px",
+    height = "800px",
     # main = list(
     #   text = "Conceptual scheme for Invasion Science",
     #   style = "font-family:verdana;color:#0085AF;font-size:18px;text-align:center;"),

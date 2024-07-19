@@ -14,7 +14,7 @@ source("resources/initiate_app.R")
 ui <- bootstrapPage(
   navbarPage(theme = shinythemes::shinytheme("paper"),
              collapsible = TRUE,
-             HTML('<a style="text-decoration:none;cursor:default;color:#CC6D7B" class="active" href="#"> Classification scheme of invasion science </a>'),
+             HTML('<a style="text-decoration:none;cursor:default;color:#FF3D36" class="active" href="#"> Classification scheme of invasion science </a>'),
              id="nav",
              windowTitle = "Classification scheme of invasion Science",
              
@@ -24,34 +24,34 @@ ui <- bootstrapPage(
                           style="width: 100%; text-align: center; padding-left: 20px; padding-right:20px;",
                           div(style = "height: 700px; padding-top: 0px; padding-right:20px; padding-left:20px;",
                               visNetworkOutput("tripartite_network", height = "100%")
-                              ),
+                          ),
                           p(style ="text-align: left;text-decoration:none;cursor:default;color:#808080",
                             "Hierarchical conceptual scheme illustrating the distribution of hypotheses among five main themes in invasion science, subdivided into 10 major research questions. The network is based on expert assessment and classification of hypotheses within the enKORE project, as described in Musseau et al. (in revision for Bioscience)"
                           )
-                          )
-                      ),
+                      )
+             ),
              
              # Panel 2: Filtered data table
              tabPanel("Data",  
                       
                       div(style = "margin-right:20px; margin-left:20px;",
-                               tabsetPanel(
-
-                                 tabPanel("Hypotheses-Questions",
-                                          DT::DTOutput("rhrq_DT") 
-                                          ,style = 'max-width: 3000px;'
-                                 ),
-                                 
-                                 tabPanel("Hypotheses defintions",
-                                          DT::DTOutput("hyp_mat_DT") 
-                                          ,style = 'max-width: 3000px;'
-                                 ),
-                                 
-                                 tabPanel("Themes-Questions",
-                                          DT::DTOutput("theme_rq_mat") 
-                                          ,style = 'max-width: 3000px;'
-                                 )
-                               )
+                          tabsetPanel(
+                            
+                            tabPanel("Hypotheses-Questions",
+                                     DT::DTOutput("rhrq_DT") 
+                                     ,style = 'max-width: 3000px;'
+                            ),
+                            
+                            tabPanel("Hypotheses defintions",
+                                     DT::DTOutput("hyp_mat_DT") 
+                                     ,style = 'max-width: 3000px;'
+                            ),
+                            
+                            tabPanel("Themes-Questions",
+                                     DT::DTOutput("theme_rq_mat") 
+                                     ,style = 'max-width: 3000px;'
+                            )
+                          )
                       )
              ),
              
@@ -64,42 +64,6 @@ ui <- bootstrapPage(
              #          tags$br()
              # ),
              
-             # Third page: about the project
-             tabPanel("About the project",
-                      div(class= "container",
-                          style="width: 100%; text-align: center; padding-left: 20px; padding-right:20px;",
-                      div(img(src="hi-knowledge workshops logo.svg",
-                              align = "left", width = "30%", style = "margin-right: 35px;")),
-                      div(style="margin-top: 30px; text-align: left;",
-                          p(
-                             'This work is part of the enKORE project (2020-2024), a project of the',
-                            a(href = "https://hi-knowledge.org","Hi Knowledge initiative")
-                            ),
-                            p( 'The Hi Knowledge initiative, led by Jonathan Jeschke and Tina Heger, is an online hub with interactive visualisation tools to make data and knowledge better accessible and comprehensible. It is also a community of people—ecologists, philosophers, practitioners—sharing an interest in knowledge synthesis in invasion ecology and beyond.'),
-                          p('If you are interested in joining our community, please ',
-                               a( href = "mailto:hiknowledgeinitiative@gmail.com","contact us")
-                            ),
-                          ),
-
-                      div(style = "display: inline-block; width:90%;  margin-top:30px; margin-bottom:30px; text-align: center;",
-                        img( src="IGB_dt_farbe_pos.jpg", align = "left", width = "25%",
-                                style = "margin-left: 35px; display: inline-block;"),
-                        img( src="1418px-Fub-logo.svg.png", align = "left", width = "25%",
-                            style = "margin-left: 35px;display: inline-block; "),
-                        img(src="Logo_Volkswagenstiftung.jpg", align = "left", width = "25%",
-                            style = "float: left;display: inline-block;  margin-left: 35px; ")
-                      ),
-                      
-                      div( style = "clear:both; text-align: left;",
-                        "Webpage built by ",
-                        a(href = "mailto:maudbv@gmail.com","Maud Bernard-Verdier"),
-                        "using R shiny.",
-                        br(),
-                        "This project is funded by the",
-                        a( href = "https://www.volkswagenstiftung.de/de","Volkswagen Stiftung.")
-                      )
-             )
-             ),
              
              # Panel 4: editable tables
              tabPanel("Create your own version!",
@@ -113,6 +77,46 @@ ui <- bootstrapPage(
                             )
                           )
                       )
+             ),
+             
+             # Third page: about the project
+             tabPanel("About the project",
+                      div(class= "container",
+                          style="width: 100%; text-align: center; padding-left: 20px; padding-right:20px;",
+                          div(style="float: left; margin-right:35pt;",
+                              img(src="hi-knowledge workshops logo.svg", width = '500pt')),
+                          div(style="float:left; margin-top: 30pt; text-align: left;font-size: 12pt; font-color: black",
+                              p('This work is part of the enKORE project (2020-2024), a project of the',
+                                a(href = "https://hi-knowledge.org","Hi Knowledge initiative.")
+                              ),
+                              p( 'The Hi Knowledge initiative, led by Jonathan Jeschke and Tina Heger, is an online hub with interactive visualisation tools to make data and knowledge better accessible and comprehensible. It is also a community of people—ecologists, philosophers, practitioners—sharing an interest in knowledge synthesis in invasion ecology and beyond.'),
+                              p('If you are interested in joining our community, please ',
+                                a( href = "mailto:hiknowledgeinitiative@gmail.com","contact us")
+                              ),
+                          ))
+
+             ),
+         
+             # footer: about the project
+             footer = list(
+               hr(), 
+               div(style = "clear:both; text-align: left;  padding-left: 20px; padding-right:20px;",
+                   "Webpage built by ",
+                   a(href = "mailto:maudbv@gmail.com","Maud Bernard-Verdier"),
+                   "using R shiny. This project was funded by the",
+                   a( href = "https://www.volkswagenstiftung.de/de","Volkswagen Stiftung.")
+               ),
+               div(class= "container",
+                   style="width: 100%; text-align: center; padding-left: 20px; padding-right:20px;",
+                   div(style = "display: inline-block; width:90%;  margin-top:10px; margin-bottom:30px; text-align: center;",
+                       img( src="IGB_dt_farbe_pos.jpg", align = "left", width = "25%",
+                            style = "margin-left: 35px; display: inline-block;"),
+                       img( src="fu-logo-240425-RGB-p.png", align = "left", width = "23%",
+                            style = "margin-left: 35px;display: inline-block; "),
+                       img(src="Logo_Volkswagenstiftung.jpg", align = "left", width = "25%",
+                           style = "float: left;display: inline-block;  margin-left: 35px; ")
+                   )
+             )
              )
   )
 )
@@ -132,11 +136,9 @@ server <- function(input, output, session) {
   output$tripartite_network<- renderVisNetwork({
     plot_3L_network(nodes_3L, edges_3L)
   })
-  
+
   
   # Datatable of RH-RQ links
-  
-  
   
   output$rhrq_DT = DT::renderDT({
     df <-  as.data.frame(rhrq_mat)
@@ -185,9 +187,9 @@ server <- function(input, output, session) {
   
   #("theme_rq_mat") 
   output$theme_rq_mat = DT::renderDT({
-    df <-  as.data.frame(theme_rq_mat[,c("Theme","RQ_abb", "Research question")] )
+    df <-  as.data.frame(theme_rq_mat[,c("Theme", "Research Question")] )
     datatable(df,
-              rownames = TRUE,
+              rownames = FALSE,
               extensions = 'Buttons',
               filter = "top",
               options = list(
@@ -214,16 +216,17 @@ server <- function(input, output, session) {
   output$hyp_mat_DT = DT::renderDT({
     
     df <-  hyp_mat %>%
-      filter(Studied.by=="invasion biology", Origin %in% c("ME", "ME + ED")) %>%
-      select(Hypothesis_label, Definition, Key_ref, Wikidata)
+      filter(Studied.by=="invasion biology", Origin %in% c("ME", "ME + ED", "SL + ME + ED")) %>%
+      select(Enders_acronym, Enders_hypothesis, Enders_definition, Enders_key_ref, Wikidata)
+ names(df) <- c("Abbrev.", "Hypothesis", "Definition","Key ref.", "Wikidata")
     
     datatable(df,
-              rownames = TRUE,
+              rownames = FALSE,
               extensions = 'Buttons',
               filter =  "top",
               caption = HTML("<p> Table of hypotheses for invasion biology adapted from <i> A conceptual map of invasion biology: Integrating hypotheses into a consensus network </i> by Enders et al., Global Ecology and Biogeography, 2020. <a href = https://doi.org/10.1111/geb.13082> https://doi.org/10.1111/geb.13082</a> </p>"),
               options = list(
-                pageLength = 15,
+                pageLength = 50,
                 dom = 'Bfrtip',
                 exportOptions = list(header = ""),
                 buttons = list(
@@ -235,7 +238,7 @@ server <- function(input, output, session) {
                   )
                 )
               )
-              )
+    )
     
   },
   server = FALSE)

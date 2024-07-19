@@ -1,11 +1,11 @@
 name: Classification-scheme-invasion-science
-title: Classification-scheme-invasion-science
+title: Classification scheme of invasion science
 username: maudbernardverdier
 account: maudbernardverdier
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 12279967
-bundleId: 8829767
+bundleId: 8878985
 url: https://maudbernardverdier.shinyapps.io/Classification-scheme-invasion-science/
 version: 1
 asMultiple: FALSE
