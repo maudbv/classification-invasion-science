@@ -1,4 +1,4 @@
-# Classification scheme of invasion Science
+# Classification Scheme of Invasion Science
 
 Scheme illustrating the distribution of major themes, research questions and related hypotheses in invasion science. The network is based on expert assessment and classification of hypotheses as described in Musseau et al. (2024) BioScience. https://doi.org/10.1093/biosci/biae093
 
